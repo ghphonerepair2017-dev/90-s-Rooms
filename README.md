@@ -14,8 +14,9 @@ Open `index.html` in a browser or deploy the repository as a static site. No bui
 | --- | --- |
 | Mouse / touch | Select objects, collect clues, adjust controls, and solve puzzles |
 | `Escape` | Pause or resume the game |
-| `M` | Toggle sound |
+| `M` | Toggle the 90s theme music |
 | `R` | Reset the current run |
+| Skip button | Jump to the next room at a 250-point score penalty |
 | Drag and drop | Move the boot disk into the computer tower (clicking also works) |
 
 The game is responsive across desktop, tablet, and mobile layouts. Touch-friendly targets are used for the high-score arrows, amplifier controls, channel dial, and RCA patch bay.
@@ -29,6 +30,8 @@ The game is responsive across desktop, tablet, and mobile layouts. Touch-friendl
 5. **Broadcast Studio:** Match each RCA cable by color and tune to channel `09`.
 
 Hints cost 30 seconds and 50 score points. Completing actions awards score; remaining time becomes a completion bonus. The best completed score is stored in `localStorage` under `rewind99-high-score`.
+
+The **MUSIC** button controls the original 60-second looping 90s-inspired instrumental theme. Browsers require a direct user gesture before audio can play, so the track starts when the player activates the button rather than autoplaying unexpectedly.
 
 ## Local setup
 
@@ -57,6 +60,7 @@ The project uses relative references to `styles.css`, `game.js`, and `docs/asset
 ├── index.html              # Semantic game shell and room markup
 ├── styles.css              # Retro visual system, layout, responsive rules, motion
 ├── game.js                 # State-driven gameplay controller and input handling
+├── assets/rewind-99-theme.mp3 # Original looping 90s-inspired instrumental theme
 └── docs/assets/gameplay.webp
 ```
 

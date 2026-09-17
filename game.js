@@ -18,7 +18,7 @@
     'Match cable colors exactly, then tune to channel 09.'
   ];
   const state = {
-    stage: 1, time: 1800, running: false, paused: false, sound: true,
+    stage: 1, time: 1800, running: false, paused: false, sound: true, music: false,
     inventory: [], tapes: [], tokens: 0, seq: [], cables: [], selectedCable: null,
     channel: 3, moves: 0, score: 0
   };
@@ -118,6 +118,23 @@
       state.running = true;
       say(['', 'Search the room. The computer needs physical media.', 'The redemption machine needs power. Tokens are scattered nearby.', 'That poster looks suspiciously precise. Tune the amp.', 'Restore the studio signal. Cables first, channel second.'][state.stage]);
     }, 700);
+  }
+  function skipStage() {
+    if (!state.running || state.paused) return;
+    if (state.stage >= 5) return say('This is the final room. Patch the signal to escape.');
+    state.running = false;
+    state.seq = [];
+    state.selectedCable = null;
+    addScore(-250);
+    beep(180, 0.16, 'sawtooth');
+    toast('LEVEL SKIPPED — 250 POINTS LOST', 'warning');
+    say('Emergency rewind engaged. Loading the next room...');
+    setTimeout(() => {
+      state.stage += 1;
+      showStage(state.stage);
+      state.running = true;
+      say(['', 'Search the room. The computer needs physical media.', 'The redemption machine needs power. Tokens are scattered nearby.', 'That poster looks suspiciously precise. Tune the amp.', 'Restore the studio signal. Cables first, channel second.'][state.stage]);
+    }, 550);
   }
   function endGame(won) {
     state.running = false;
@@ -259,11 +276,29 @@
   $('#resumeBtn').addEventListener('click', () => setPaused(false));
   $('#pauseBtn').addEventListener('click', () => setPaused(!state.paused));
   $('#resetBtn').addEventListener('click', () => { if (window.confirm('REWIND THE ENTIRE GAME? All progress will be lost.')) window.location.reload(); });
-  $('#soundBtn').addEventListener('click', () => { state.sound = !state.sound; $('#soundBtn').textContent = `SOUND: ${state.sound ? 'ON' : 'OFF'}`; if (state.sound) beep(500); });
+  $('#soundBtn').addEventListener('click', () => { state.sound = !state.sound; $('#soundBtn').textContent = `SFX: ${state.sound ? 'ON' : 'OFF'}`; if (state.sound) beep(500); });
+  $('#musicBtn').addEventListener('click', async () => {
+    const music = $('#themeMusic');
+    if (state.music) {
+      music.pause();
+      state.music = false;
+      $('#musicBtn').textContent = 'MUSIC: OFF';
+      return;
+    }
+    try {
+      await music.play();
+      state.music = true;
+      $('#musicBtn').textContent = 'MUSIC: ON';
+      toast('THEME MUSIC PLAYING', 'success');
+    } catch (_) {
+      say('Music is blocked until the browser receives a direct tap.');
+    }
+  });
+  $('#skipBtn').addEventListener('click', skipStage);
   $('#hintBtn').addEventListener('click', () => { if (!state.running || state.paused) return; state.time = Math.max(0, state.time - 30); updateTimer(); addScore(-50); say(`HINT: ${hints[state.stage - 1]}`); toast('HINT USED — 30 SECONDS LOST', 'warning'); });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && $('#pinOverlay').classList.contains('hidden')) setPaused(!state.paused);
-    if (event.key.toLowerCase() === 'm') $('#soundBtn').click();
+    if (event.key.toLowerCase() === 'm') $('#musicBtn').click();
     if (event.key.toLowerCase() === 'r' && !event.metaKey && !event.ctrlKey) $('#resetBtn').click();
   });
   document.addEventListener('visibilitychange', () => { if (document.hidden && state.running) setPaused(true); });

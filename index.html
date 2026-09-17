@@ -12,7 +12,7 @@
 <header class="topbar">
   <div class="brand">REWIND '99<small>A RETRO ESCAPE</small></div>
   <div class="timer-wrap"><div class="timer-label">TIME REMAINING</div><div class="timer" id="timer">30:00</div></div>
-  <div class="top-actions"><button class="icon-btn" id="soundBtn" type="button">SOUND: ON</button><button class="icon-btn" id="pauseBtn" type="button">Ⅱ PAUSE</button><button class="icon-btn" id="resetBtn" type="button">↻ RESET</button></div>
+  <div class="top-actions"><button class="icon-btn" id="soundBtn" type="button">SFX: ON</button><button class="icon-btn" id="musicBtn" type="button">MUSIC: OFF</button><button class="icon-btn" id="pauseBtn" type="button">Ⅱ PAUSE</button><button class="icon-btn" id="skipBtn" type="button">» SKIP</button><button class="icon-btn" id="resetBtn" type="button">↻ RESET</button></div>
 </header>
 <main class="game-shell">
  <section class="screen-frame" aria-label="Game viewport"><div class="tracking"></div>
@@ -57,7 +57,8 @@
  <div class="overlay hidden" id="loseOverlay"><div class="modal"><h1>GAME<br>OVER</h1><p>The tape ran out. The 90s have you now.</p><button class="start-btn" onclick="location.reload()">↻ TRY AGAIN</button></div></div>
  <div class="overlay hidden" id="pauseOverlay"><div class="modal"><h2>SIGNAL<br>PAUSED</h2><p>Your progress is safe. Take a breath, then jump back into the room.</p><button class="start-btn" id="resumeBtn" type="button">▶ RESUME</button></div></div>
  <div class="overlay hidden" id="pinOverlay"><div class="modal compact-modal"><h2>KEYPAD ACCESS</h2><p>BACK LABELS: 93 · 97 · 99<br>COMBINE THE FIRST AND LAST YEAR.</p><input class="retro-input" id="pinInput" inputmode="numeric" maxlength="4" placeholder="ENTER 4-DIGIT PIN" autocomplete="off"><button class="start-btn" id="pinSubmit" type="button">UNLOCK</button></div></div>
-<div class="toast" id="toast"></div>
+ <div class="toast" id="toast"></div>
+ <audio id="themeMusic" src="assets/rewind-99-theme.mp3" loop preload="auto"></audio>
 <script src="game.js" defer></script>
 </body>
 </html>

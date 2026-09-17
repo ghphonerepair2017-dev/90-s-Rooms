@@ -19,10 +19,14 @@ The repository began as a visually ambitious single-page escape-room game with f
 | Performance | The game was lightweight but had no clear ownership around intervals or transient effects. | Kept a single timer interval, clear it on end, self-remove score popups, avoid per-frame loops, and retain CSS-only animation for scenery. |
 | Documentation | No README, setup instructions, screenshots, or control map were included. | Added this audit, a complete README, and a verified gameplay screenshot under `docs/assets/`. |
 | Deployment | The source was static but deployment assumptions were undocumented. | Documented direct opening, local HTTP serving, and GitHub Pages root deployment. |
+| Player agency | Players had no way to bypass a room after getting stuck. | Added a visible skip control that advances to the next room with a clear 250-point score penalty; the final room remains required for the escape ending. |
+| Audio presentation | SFX existed, but there was no musical bed or independent music control. | Added an original looping 90s-inspired instrumental theme under `assets/` and a user-gesture-safe MUSIC toggle separate from SFX. |
 
 ## Implemented gameplay polish
 
 The five original puzzles were preserved rather than replaced. Interaction feedback now calls out progress, wrong choices, and next steps in the sidebar message area. The arcade sequence and patch-bay interactions continue to support mouse and touch. The amplifier remains slider-based, while the computer puzzle supports both drag-and-drop and click-to-insert. Sound remains optional and gracefully degrades if Web Audio is blocked.
+
+The new skip flow is deliberately explicit: it is disabled while paused, unavailable on the final room, and applies a visible score penalty. This preserves the completion challenge while preventing a single difficult puzzle from blocking the entire game. Theme music is looped by the browser's native audio element and only starts after a direct player action to respect autoplay policies.
 
 ## Validation performed
 
