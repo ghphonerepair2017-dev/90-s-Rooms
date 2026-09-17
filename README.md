@@ -33,6 +33,8 @@ Hints cost 30 seconds and 50 score points. Completing actions awards score; rema
 
 The **MUSIC** button controls the original 60-second looping 90s-inspired instrumental theme. Browsers require a direct user gesture before audio can play, so the track starts when the player activates the button rather than autoplaying unexpectedly.
 
+The opening puzzles are intentionally forgiving: Stage 1 accepts the three featured tapes in any discovery order and automatically sorts them by release year when the keypad is opened. The PIN also accepts common formatting such as `93-99`. In Stage 2, clicking the floppy reveals it if the beanbag has not been moved yet, then a second click collects it; the password accepts capitalization, spacing, and the shorthand `Tama`.
+
 ## Local setup
 
 ```bash

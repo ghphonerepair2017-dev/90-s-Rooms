@@ -56,7 +56,7 @@
 <div class="overlay hidden" id="winOverlay"><div class="modal"><h2>ESCAPE<br>SUCCESSFUL</h2><p id="winStats"></p><button class="start-btn" id="playAgainBtn">↻ REWIND & PLAY AGAIN</button></div></div>
  <div class="overlay hidden" id="loseOverlay"><div class="modal"><h1>GAME<br>OVER</h1><p>The tape ran out. The 90s have you now.</p><button class="start-btn" onclick="location.reload()">↻ TRY AGAIN</button></div></div>
  <div class="overlay hidden" id="pauseOverlay"><div class="modal"><h2>SIGNAL<br>PAUSED</h2><p>Your progress is safe. Take a breath, then jump back into the room.</p><button class="start-btn" id="resumeBtn" type="button">▶ RESUME</button></div></div>
- <div class="overlay hidden" id="pinOverlay"><div class="modal compact-modal"><h2>KEYPAD ACCESS</h2><p>BACK LABELS: 93 · 97 · 99<br>COMBINE THE FIRST AND LAST YEAR.</p><input class="retro-input" id="pinInput" inputmode="numeric" maxlength="4" placeholder="ENTER 4-DIGIT PIN" autocomplete="off"><button class="start-btn" id="pinSubmit" type="button">UNLOCK</button></div></div>
+ <div class="overlay hidden" id="pinOverlay"><div class="modal compact-modal"><h2>KEYPAD ACCESS</h2><p>BACK LABELS: 93 · 97 · 99<br>COMBINE THE FIRST AND LAST YEAR.</p><input class="retro-input" id="pinInput" inputmode="numeric" maxlength="7" placeholder="ENTER 4-DIGIT PIN" autocomplete="off"><button class="start-btn" id="pinSubmit" type="button">UNLOCK</button></div></div>
  <div class="toast" id="toast"></div>
  <audio id="themeMusic" src="assets/rewind-99-theme.mp3" loop preload="auto"></audio>
 <script src="game.js" defer></script>

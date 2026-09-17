@@ -23,6 +23,8 @@ The repository began as a visually ambitious single-page escape-room game with f
 | Audio presentation | SFX existed, but there was no musical bed or independent music control. | Added an original looping 90s-inspired instrumental theme under `assets/` and a user-gesture-safe MUSIC toggle separate from SFX. |
 | Visual depth | The original rooms were flat CSS compositions with limited depth cues. | Added CSS perspective, pointer/touch parallax, stronger neon material treatment, layered shadows, and more vibrant 90s contrast while retaining the existing lightweight scene construction. |
 | Game feel | Success and skip events mostly relied on text feedback. | Added a capped canvas particle loop, score-burst particles, flash/shake juice, and lifecycle cleanup. Reduced-motion users receive a static path. |
+| Stage 1 solvability | The puzzle required the player to click featured tapes in one exact order, and formatted PIN input could be truncated by the four-character field limit. | Discovery order is now independent from solution order; the keypad sorts the three valid tapes by release year, PIN input is normalized, and the field accepts formatted entries such as `93-99`. |
+| Stage 2 solvability | The floppy was blocked until the beanbag interaction was completed, making the intended discovery path brittle. | The floppy now provides a direct reveal-then-collect path as well as the original beanbag-first path. Password validation accepts capitalization, spaces, and the useful shorthand `Tama`. |
 
 ## Implemented gameplay polish
 
@@ -31,6 +33,8 @@ The five original puzzles were preserved rather than replaced. Interaction feedb
 The new skip flow is deliberately explicit: it is disabled while paused, unavailable on the final room, and applies a visible score penalty. This preserves the completion challenge while preventing a single difficult puzzle from blocking the entire game. Theme music is looped by the browser's native audio element and only starts after a direct player action to respect autoplay policies.
 
 The 3D treatment is intentionally presentation-focused rather than a full engine migration. That choice protects the game’s static deployment model and keeps the interaction loop fast on mobile browsers while still creating a more dimensional, vibrant room feel.
+
+The revised opening sequence was tested in a browser before publication. Stage 1 was completed with tapes selected in a non-solution order and a formatted `93-99` entry; Stage 2 was completed through the direct floppy reveal path, tower click, and spaced `Tama gotchi` answer. Both transitions reached the next stage without console errors.
 
 ## Validation performed
 

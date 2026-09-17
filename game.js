@@ -223,6 +223,8 @@
   }
 
   // Stage 1: video store.
+  const stageOneOrder = ['Jurassic', 'Titanic', 'Matrix'];
+  const normalizePin = value => value.toLowerCase().replace(/[^0-9]/g, '');
   $$('[data-movie]').forEach(tape => tape.addEventListener('click', () => {
     if (tape.classList.contains('found')) return;
     tape.classList.add('found');
@@ -232,20 +234,24 @@
     slots[state.tapes.length - 1].textContent = tape.dataset.movie;
     slots[state.tapes.length - 1].classList.add('full');
     say(`${tape.dataset.movie} found. ${3 - state.tapes.length} featured tape(s) remaining.`);
-    if (state.tapes.length === 3) say('All featured tapes found. Order them oldest to newest, then tap the keypad.');
+    if (state.tapes.length === 3) say('All featured tapes found. Tap the keypad — discovery order no longer matters; the labels reveal the sequence.');
   }));
   $$('[data-decoy]').forEach(tape => tape.addEventListener('click', () => say('A classic, but not one of the featured titles. Keep browsing.')));
   $('#keypad').addEventListener('click', () => {
     if (state.tapes.length < 3) return say('The keypad is locked. Find all three featured tapes first.');
-    if (state.tapes.map(tape => tape.name).join(',') !== 'Jurassic,Titanic,Matrix') {
-      say('BZZT! Wrong shelf order. Tap the order tray to reset and try again.'); beep(110, 0.3); return;
+    const discovered = new Set(state.tapes.map(tape => tape.name));
+    if (!stageOneOrder.every(name => discovered.has(name))) return say('The keypad needs Jurassic, Titanic, and Matrix. Keep searching the featured shelf.');
+    if (state.tapes.map(tape => tape.name).join(',') !== stageOneOrder.join(',')) {
+      state.tapes = stageOneOrder.map(name => ({ name, pin: $(`[data-movie="${name}"]`).dataset.pin }));
+      $$('.order-slot').forEach((slot, index) => { slot.textContent = stageOneOrder[index]; slot.classList.add('full'); });
+      say('The keypad sorted the tapes by release year: Jurassic → Titanic → Matrix. Now enter the combined PIN.');
     }
     $('#pinOverlay').classList.remove('hidden');
     $('#pinInput').value = '';
     $('#pinInput').focus();
   });
   function checkPin() {
-    if ($('#pinInput').value.trim() === '9399') {
+    if (normalizePin($('#pinInput').value) === '9399') {
       $('#pinOverlay').classList.add('hidden');
       nextStage({ id: 'storekey', label: 'STORE KEY', emoji: '🔑' });
     } else { say('ACCESS DENIED. Combine the first movie’s year with the last movie’s year.'); $('#pinInput').select(); beep(100, 0.25); }
@@ -265,7 +271,12 @@
   // Stage 2: bedroom.
   $('#beanbag').addEventListener('click', () => { $('#beanbag').classList.add('moved'); addScore(50); say('You shove the beanbag aside. Something shiny was underneath!'); });
   $('#floppy').addEventListener('click', () => {
-    if (!$('#beanbag').classList.contains('moved')) return say('You can’t quite reach it. Move the beanbag first.');
+    if (!$('#beanbag').classList.contains('moved')) {
+      $('#beanbag').classList.add('moved');
+      say('You pull the boot disk free from beneath the beanbag. Click it again to pick it up.');
+      return;
+    }
+    if ($('#floppy').classList.contains('taken')) return say('The boot disk is already in your inventory. Click the computer tower.');
     $('#floppy').classList.add('taken'); addItem('floppy', 'BOOT DISK', '💾'); say('Boot disk acquired. Click the computer tower to insert it.');
   });
   $('#floppy').draggable = true;
@@ -278,7 +289,7 @@
   }
   function checkPassword() {
     const value = $('#passwordInput').value.trim().toLowerCase().replace(/\s/g, '');
-    if (value === 'tamagotchi') { $('#passwordUI').classList.remove('show'); nextStage({ id: 'modemcode', label: 'MODEM CODE', emoji: '☎️' }); }
+    if (value.includes('tamagotchi') || value === 'tama') { $('#passwordUI').classList.remove('show'); nextStage({ id: 'modemcode', label: 'MODEM CODE', emoji: '☎️' }); }
     else { say('LOGIN FAILED. Think of the tiny digital pet you had to feed.'); $('#passwordInput').value = ''; beep(100, 0.25); }
   }
   $('#passwordSubmit').addEventListener('click', checkPassword);
