@@ -70,6 +70,8 @@ The original single-file implementation was split into separate HTML, CSS, and J
 
 The UI adds a persistent score HUD, non-blocking PIN entry, pause/resume overlay, responsive action controls, keyboard shortcuts, focus-visible states, reduced-motion support, clear feedback toasts, score popups, timer critical-state styling, and a local high-score record.
 
+The visual pass adds a lightweight 3D presentation layer without introducing a heavy rendering dependency: CSS perspective and pointer parallax give each room depth, a device-pixel-aware canvas adds ambient neon particles and score bursts, and success/skip events add screen flash and shake feedback. The effects run through one `requestAnimationFrame` loop, cap device-pixel density, clean up on page exit, and disable non-essential motion when `prefers-reduced-motion` is enabled.
+
 ## Verification
 
 - JavaScript syntax validated with `node --check game.js`.

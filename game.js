@@ -24,6 +24,76 @@
   };
   let timerId = 0;
   let audioCtx;
+  let fxFrame = 0;
+  const fxParticles = [];
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initFX() {
+    const canvas = $('#fxCanvas');
+    const frame = $('.screen-frame');
+    if (!canvas || !frame || prefersReducedMotion) return;
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    const resize = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = frame.clientWidth * ratio;
+      canvas.height = frame.clientHeight * ratio;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
+    const seed = () => {
+      while (fxParticles.length < 38) fxParticles.push({
+        x: Math.random() * frame.clientWidth, y: Math.random() * frame.clientHeight,
+        vx: (Math.random() - .5) * .18, vy: -.16 - Math.random() * .28,
+        life: 1, size: 1 + Math.random() * 2, hue: Math.random() > .5 ? '#38e5e2' : '#ff2da7'
+      });
+    };
+    const render = () => {
+      const width = frame.clientWidth;
+      const height = frame.clientHeight;
+      context.clearRect(0, 0, width, height);
+      seed();
+      for (let index = fxParticles.length - 1; index >= 0; index -= 1) {
+        const particle = fxParticles[index];
+        particle.x += particle.vx; particle.y += particle.vy; particle.life -= .0035;
+        if (particle.life <= 0 || particle.y < -12) { fxParticles.splice(index, 1); continue; }
+        context.globalAlpha = Math.min(.8, particle.life);
+        context.fillStyle = particle.hue;
+        context.shadowBlur = 10; context.shadowColor = particle.hue;
+        context.fillRect(particle.x, particle.y, particle.size, particle.size);
+      }
+      context.globalAlpha = 1; context.shadowBlur = 0;
+      fxFrame = requestAnimationFrame(render);
+    };
+    const burst = (count = 12, color = '#f4d86b') => {
+      const centerX = frame.clientWidth / 2;
+      const centerY = frame.clientHeight / 2;
+      for (let index = 0; index < count; index += 1) {
+        const angle = (Math.PI * 2 * index) / count;
+        const speed = 1 + Math.random() * 1.8;
+        fxParticles.push({ x: centerX, y: centerY, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 1, size: 2 + Math.random() * 2, hue: color });
+      }
+    };
+    window.rewindFXBurst = burst;
+    window.addEventListener('resize', resize, { passive: true });
+    resize(); render();
+    window.addEventListener('pagehide', () => { cancelAnimationFrame(fxFrame); window.removeEventListener('resize', resize); }, { once: true });
+    frame.addEventListener('pointermove', event => {
+      const rect = frame.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      frame.style.setProperty('--tilt-x', `${x * 2.2}deg`);
+      frame.style.setProperty('--tilt-y', `${y * -2.2}deg`);
+    });
+    frame.addEventListener('pointerleave', () => { frame.style.setProperty('--tilt-x', '0deg'); frame.style.setProperty('--tilt-y', '0deg'); });
+  }
+  function juice(kind = 'success') {
+    const frame = $('.screen-frame');
+    if (prefersReducedMotion || !frame) return;
+    frame.classList.remove('juice-shake', 'juice-flash');
+    void frame.offsetWidth;
+    frame.classList.add(kind === 'error' ? 'juice-shake' : 'juice-flash');
+    setTimeout(() => frame.classList.remove('juice-flash'), 220);
+  }
 
   function beep(frequency = 500, duration = 0.07, type = 'square') {
     if (!state.sound) return;
@@ -57,6 +127,8 @@
     popup.textContent = `${points > 0 ? '+' : ''}${points}`;
     $('.screen-frame').appendChild(popup);
     setTimeout(() => popup.remove(), 850);
+    window.rewindFXBurst?.(points > 0 ? 10 : 6, points > 0 ? '#f4d86b' : '#ff5c65');
+    juice(points > 0 ? 'success' : 'error');
   }
   function renderInventory() {
     $('#inventory').innerHTML = state.inventory.length
@@ -107,6 +179,7 @@
   function nextStage(item) {
     state.running = false;
     addScore(500);
+    window.rewindFXBurst?.(24, '#38e5e2');
     beep(880, 0.3, 'sawtooth');
     if (item) addItem(item.id, item.label, item.emoji);
     toast('STAGE CLEAR', 'success');
@@ -126,6 +199,7 @@
     state.seq = [];
     state.selectedCable = null;
     addScore(-250);
+    juice('error');
     beep(180, 0.16, 'sawtooth');
     toast('LEVEL SKIPPED — 250 POINTS LOST', 'warning');
     say('Emergency rewind engaged. Loading the next room...');
@@ -306,4 +380,5 @@
   renderHUD();
   updateTimer();
   renderInventory();
+  initFX();
 })();
